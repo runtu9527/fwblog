@@ -7,8 +7,16 @@ namespace fwblog.Model
 {
     public class Blog
     {
-        public string btitle { get; set; }
-        public int bID { get; set; }
-        public DateTime bCreatTime { get; set; } = DateTime.Now;
+        public string Title { get; set; }
+        public int Id { get; set; }
+        public DateTime CreatTime { get; set; } = DateTime.Now;
     }
+
+    public class BlogCategory
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public List<Blog> Blogs { get; set; }
+    }
+
 }

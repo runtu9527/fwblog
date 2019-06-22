@@ -1,118 +1,213 @@
 <template>
-  <div class="home">
-    <div class="l_body">
-      <div class='container clearfix'>
-        <div class='l_main'>
-          <section class="post-list">
-            <div v-for="i in list" :key="i.bID" class='post-wrapper'>
-              <article class="post ">
-                <section class="meta">
-                  <h2 class="title">
-                    <router-link :to="'/content/' + i.bID">
-                      {{ i.btitle }}
-                    </router-link>
-                  </h2>
-                  <time>
-                    {{i.bCreateTime}}
-                  </time>
-                  <div class='cats'>
-                    <a href="javascript:void(0)">{{i.bsubmitter}}</a>
-                  </div>
-                </section>
-                <section class="article typo">
-                  <article v-html="i.bcontent"></article>
-                  <div class="readmore">
-                    <a href="/dotnet/asp.net core???????????/">查看更多</a>
-                  </div>
-                  <div class="full-width auto-padding tags">
-                    <a href="javascript:void(0);">{{i.bcategory}}</a>
-                  </div>
-                </section>
-              </article>
-            </div>
-          </section>
-
-
-          <nav id="page-nav">
-            <router-link :to="'/?page=' + (page>1?page-1:1)" class="prev" rel="prev">
-              {{(page<=1? "": "Previous")}}
-            </router-link>
-            <router-link :to="'/?page=' + (page>=TotalCount? TotalCount: page+1)" class="next" rel="next">
-              {{(page>=TotalCount? "": "Next")}}
-            </router-link>
-          </nav>
-
-
-        </div>
-        <aside class='l_side'>
-
-
-          <section class='m_widget categories'>
-            <div class='header'>标签</div>
-            <div class='content'>
-
-              <ul class="entry">
-
-                <li><a class="flat-box" href="javascript:void(0);">
-                  <div class='name'>博客</div>
-                  <div class='badget'>11</div>
-                </a></li>
-
-                <li><a class="flat-box" href="javascript:void(0);">
-                  <div class='name'>随笔</div>
-                  <div class='badget'>10</div>
-                </a></li>
-
-              </ul>
-
-            </div>
-          </section>
-
-        </aside>
-      </div>
+  <div id="container">
+    <div class="device">
+      <ul>
+        <li
+          v-for="(item, index) in list"
+          :key="index"
+          :class="{active:item==current}"
+          @click="onClick(item)"
+        >{{item.name}}</li>
+      </ul>
+    </div>
+    <div class="blogs">
+      <table
+        cellspacing="0"
+        cellpadding="0"
+        v-if="current && current.Blogs"
+      >
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>标题</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in current.blogs" :key="index">
+            <td>{{item.id?item.id:""}}</td>
+            <td>{{item.title?item.title:""}}</td>
+            <td>
+              <div>
+                <router-link :to="{name:'toiletinfo',query:{id:item.id}}">xxx</router-link>
+                <!-- <a href="#" @click="ontoiletInfoClick(item)"
+                >查看详情</a> -->
+                <a href="#">修改</a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
 
-<script>
-// @ is an alias to /src
 
+<script>
+var refreshTimeSpan = 10 * 1000;
 export default {
   name: "home",
   components: {},
-    data() {
-        return {
-            page: 1,
-            TotalCount: 1,
-            isShow: true,
-            list: []
+  data() {
+    return {
+      refreshTimer:true,
+      count: 0,
+      list: [],
+      current: null
+    };
+  },
+
+  // mounted: function () {
+  //   this.startRefresh()
+  // },
+
+  created: function() {
+    var that=this;
+    console.log('created');
+    that.refreshTimer=true;
+    that.startRefresh();
+  },
+
+  destroyed:function(){
+    var that=this;
+    console.log('destroyed');
+    that.refreshTimer=false;
+  },
+
+  methods: {
+    ontoiletInfoClick: function(item) {
+      if (!item) {
+        return;
+      }
+
+    },
+
+    onClick: function(item) {
+      if (!item) {
+        return;
+      }
+
+      if (item == this.current) {
+        return;
+      }
+
+      this.current = item;
+    },
+    getToilets: function(cb) {
+      var that = this;
+      that.$api.get('Blog/byPage?page=1', {}, function(err, data) {
+        cb(err, data);
+      });
+    },
+    startRefresh: function() {
+      var that = this;
+      that.doRefresh(function() {
+        if(that.refreshTimer){
+ that.timer = setTimeout(function() {
+          that.startRefresh();
+        }, refreshTimeSpan);
         }
+       
+      });
     },
-    created() {
-        this.getData()
-    },
-    methods: {
-        getData() {
-            var that = this
-            var urlPage = that.$route.query.page
-            if (urlPage) {
-                that.page = urlPage
-            }
-            this.$api.get('Blog/byPage?page=' + that.page, null, r => {
-                this.list = r.data
-                this.page = r.page
-                this.TotalCount = r.pageCount
-                this.isShow=false
-            })
+    doRefresh: function(cb) {
+      var that = this;
+      that.getToilets(function(err, data) {
+        // console.log(err);
+        // console.log(data);
+        that.count++;
+        that.list = data || [];
+        if (that.current) {
+          var item = that.list.find(function(p) {
+            return p.id == that.current.id;
+          });
+          if (item) {
+            that.current = item;
+          } else {
+            that.current = null;
+          }
         }
-    },
-    // watch: {
-    //     '$route'(to, from) {
-    //         this.list=[]
-    //         this.isShow=true
-    //         this.page = to.query.page
-    //         this.getData()
-    //     }
-    // }
+        cb && cb();
+      });
+    }
+  }
 };
 </script>
+
+<style>
+
+#container {
+  width: 100%;
+  height: 100%;
+  background-color: black
+}
+.device {
+  width: 200px;
+  height: 100%;
+  left: 0;
+  top: 0;
+  /* border-right: 2px solid gray; */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.device ul {
+  position: relative;
+  width: 100%;
+  height: auto;
+  padding: 0;
+  margin: 0;
+}
+
+.device ul li {
+  position: relative;
+  height: 50px;
+  border-bottom: 1px solid lightgray;
+  line-height: 50px;
+  text-indent: 15px;
+  cursor: pointer;
+}
+
+.device ul li.active {
+  background-color: #6693b2;
+  color: white;
+}
+.device ul li:hover {
+  background-color: #6693b2;
+  opacity: 0.5;
+  color: white;
+}
+
+.blogs {
+  position: absolute;
+  left: 200px;
+  height: 100%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border-left: 2px solid gray;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.blogs table {
+  position: relative;
+  width: 100%;
+  height: auto;
+  border: none;
+}
+
+.blogs table thead tr th {
+  font-weight: normal;
+  background-color: #6693b2;
+  color: white;
+}
+
+.blogs table thead tr th,
+.blogs table tbody tr td {
+  width: 10%;
+  height: 50px;
+  text-align: center;
+  border: 1px solid lightgray;
+}
+</style>

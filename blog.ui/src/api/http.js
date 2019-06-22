@@ -1,6 +1,6 @@
 import $ from 'jquery'
 
-var root = "https://localhost:44335/api/";
+var root = "https://localhost:44338/api/";
 
 var net = {
     getOption: function (requestType,path, callback) {
@@ -22,6 +22,8 @@ var net = {
                         result = data.msg;
                     }
                 }
+
+                console.log("请求["+root+path+"]成功");
                 callback(result, objData);
             },
             complete: function (XMLHttpRequest, status) {

@@ -40,18 +40,17 @@ namespace fwblog.Controllers
             for (int i = 0; i < 100; i++)
             {
                 Blog blog = new Blog();
-                blog.bID = i;
-                blog.btitle = "标题" + i;
+                blog.Id = i;
+                blog.Title = "标题" + i;
                 blogs.Add(blog);
             }
 
-            object obj = new
-            {
-                data = blogs,
-                page = page,
-                pageCount = blogs.Count
-            };
-            return new JsonResult(new ApiResponse() { data = obj });
+            List<BlogCategory> categories = new List<BlogCategory>();
+
+            categories.Add(new BlogCategory() { Id = 1, Name = "分类1", Blogs = blogs });
+            categories.Add(new BlogCategory() { Id = 2, Name = "分类2", Blogs = blogs });
+
+            return new JsonResult(new ApiResponse() { data = categories });
         }
 
         // POST: api/Blog
