@@ -31,7 +31,7 @@ namespace fwblog
                 c.AddPolicy("LimitRequests", policy =>
                 {
                     policy
-                    .WithOrigins("http://localhost:8080",  "http://localhost:8081")//支持多个域名端口，注意端口号后不要带/斜杆：比如localhost:8000/，是错的
+                    .WithOrigins("http://localhost:8080", "http://localhost:8081")//支持多个域名端口，注意端口号后不要带/斜杆：比如localhost:8000/，是错的
                     .AllowAnyHeader()//Ensures that the policy allows any header.
                     .AllowAnyMethod();
                 });
@@ -39,7 +39,12 @@ namespace fwblog
             });
 
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonOptions(opt =>
+                {
+                    opt.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

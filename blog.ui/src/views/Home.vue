@@ -7,38 +7,42 @@
           :key="index"
           :class="{active:item==current}"
           @click="onClick(item)"
-        >{{item.name}}</li>
+        >{{item.Name}}</li>
       </ul>
     </div>
     <div class="blogs">
       <table
         cellspacing="0"
         cellpadding="0"
-        v-if="current && current.blogs"
+        v-if="current && current.Blogs"
       >
         <thead>
           <tr>
             <th>Id</th>
             <th>标题</th>
+            <th>创建时间</th>
             <th>操作</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in current.blogs" :key="index">
-            <td>{{item.id?item.id:""}}</td>
-            <td>{{item.title?item.title:""}}</td>
+          <tr v-for="(item, index) in current.Blogs" :key="index">
+            <td>{{item.Id}}</td>
+            <td>{{item.Title?item.Title:""}}</td>
+            <td>{{item.CreatTime | formatDate('YYYY-MM-DD HH:mm:ss')}}</td>
             <td>
               <div>
                 <!-- <router-link :to="{name:'toiletinfo',query:{id:item.id}}">xxx</router-link> -->
                 <!-- <a href="#" @click="ontoiletInfoClick(item)"
                 >查看详情</a> -->
-                <a href="#">修改</a>
+                <a href="#">查看</a>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <div class="floatclear"></div>
   </div>
 </template>
 
@@ -135,13 +139,16 @@ export default {
 </script>
 
 <style>
+.floatclear{
+  float: none;
+}
 
 #container {
   width: 100%;
   height: 100%;
-  background-color: black
 }
 .device {
+  float: left;
   width: 200px;
   height: 100%;
   left: 0;
@@ -149,6 +156,7 @@ export default {
   /* border-right: 2px solid gray; */
   overflow-x: hidden;
   overflow-y: auto;
+  background-color:red;
 }
 
 .device ul {
@@ -179,9 +187,10 @@ export default {
 }
 
 .blogs {
-  position: absolute;
+  /* float: right; */
   left: 200px;
   height: 100%;
+  widows: 100%;
   top: 0;
   right: 0;
   bottom: 0;
