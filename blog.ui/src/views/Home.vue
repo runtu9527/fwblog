@@ -14,7 +14,7 @@
       <table
         cellspacing="0"
         cellpadding="0"
-        v-if="current && current.Blogs"
+        v-if="current && current.blogs"
       >
         <thead>
           <tr>
