@@ -41,6 +41,7 @@ namespace fwblog
 
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                //api Json 接口格式配置
                 .AddJsonOptions(opt =>
                 {
                     opt.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
