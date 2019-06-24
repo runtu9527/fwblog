@@ -29,7 +29,7 @@
             <td>{{item.title?item.title:""}}</td>
             <td>
               <div>
-                <router-link :to="{name:'toiletinfo',query:{id:item.id}}">xxx</router-link>
+                <!-- <router-link :to="{name:'toiletinfo',query:{id:item.id}}">xxx</router-link> -->
                 <!-- <a href="#" @click="ontoiletInfoClick(item)"
                 >查看详情</a> -->
                 <a href="#">修改</a>
