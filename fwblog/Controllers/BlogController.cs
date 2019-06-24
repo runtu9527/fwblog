@@ -26,10 +26,17 @@ namespace fwblog.Controllers
             return "value";
         }
 
-        [HttpGet()]
-        public string GetById(int id)
+        [HttpGet("getBlog")]
+        public ActionResult GetBlog(int category,int blog)
         {
-            return $"id:{id}";
+            return new JsonResult(new ApiResponse()
+            {
+                data = new
+                {
+                    category=category,
+                    blog=blog
+                }
+            });
         }
 
         //api/Blog/byPage?page=1

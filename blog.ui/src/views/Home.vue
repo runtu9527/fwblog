@@ -34,7 +34,7 @@
                 <!-- <router-link :to="{name:'toiletinfo',query:{id:item.id}}">xxx</router-link> -->
                 <!-- <a href="#" @click="ontoiletInfoClick(item)"
                 >查看详情</a> -->
-                <a href="#">查看</a>
+                <a href="#" @click="onBlogInfoClick(current,item)">查看</a>
               </div>
             </td>
           </tr>
@@ -79,11 +79,14 @@ export default {
   },
 
   methods: {
-    ontoiletInfoClick: function(item) {
-      if (!item) {
+    onBlogInfoClick: function(category,blog) {
+      if (!blog || !category) {
         return;
       }
-
+      var that=this;
+      that.$api.get('Blog/getBlog?category='+category.Id+'&blog='+blog.Id, {}, function(err, data) {
+         //console.log(data);
+      });
     },
 
     onClick: function(item) {
