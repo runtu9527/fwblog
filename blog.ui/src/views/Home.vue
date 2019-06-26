@@ -1,225 +1,43 @@
 <template>
   <div id="container">
-    <div class="device">
-      <ul>
-        <li
-          v-for="(item, index) in list"
-          :key="index"
-          :class="{active:item==current}"
-          @click="onClick(item)"
-        >{{item.Name}}</li>
-      </ul>
-    </div>
-    <div class="blogs">
-      <table
-        cellspacing="0"
-        cellpadding="0"
-        v-if="current && current.Blogs"
-      >
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>标题</th>
-            <th>创建时间</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, index) in current.Blogs" :key="index">
-            <td>{{item.Id}}</td>
-            <td>{{item.Title?item.Title:""}}</td>
-            <td>{{item.CreatTime | formatDate('YYYY-MM-DD HH:mm:ss')}}</td>
-            <td>
-              <div>
-                <!-- <router-link :to="{name:'toiletinfo',query:{id:item.id}}">xxx</router-link> -->
-                <!-- <a href="#" @click="ontoiletInfoClick(item)"
-                >查看详情</a> -->
-                <a href="#" @click="onBlogInfoClick(current,item)">查看</a>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="floatclear"></div>
+     <nav>
+       <ul>
+         <li>分类</li>
+         <li>标签</li>
+         <li>归档</li>
+         <li>关于</li>
+         <li>搜索</li>
+       </ul>
+     </nav>
   </div>
 </template>
 
-
 <script>
-var refreshTimeSpan = 10 * 1000;
 export default {
   name: "home",
   components: {},
   data() {
     return {
-      refreshTimer:true,
       count: 0,
       list: [],
       current: null
     };
   },
 
-  // mounted: function () {
-  //   this.startRefresh()
-  // },
-
   created: function() {
     var that=this;
     console.log('created');
-    that.refreshTimer=true;
-    that.startRefresh();
   },
 
   destroyed:function(){
     var that=this;
     console.log('destroyed');
-    that.refreshTimer=false;
   },
 
   methods: {
-    onBlogInfoClick: function(category,blog) {
-      if (!blog || !category) {
-        return;
-      }
-      var that=this;
-      that.$api.get('Blog/getBlog?category='+category.Id+'&blog='+blog.Id, {}, function(err, data) {
-         //console.log(data);
-      });
-    },
-
-    onClick: function(item) {
-      if (!item) {
-        return;
-      }
-
-      if (item == this.current) {
-        return;
-      }
-
-      this.current = item;
-    },
-    getToilets: function(cb) {
-      var that = this;
-      that.$api.get('Blog/byPage?page=1', {}, function(err, data) {
-        cb(err, data);
-      });
-    },
-    startRefresh: function() {
-      var that = this;
-      that.doRefresh(function() {
-        if(that.refreshTimer){
- that.timer = setTimeout(function() {
-          that.startRefresh();
-        }, refreshTimeSpan);
-        }
-       
-      });
-    },
-    doRefresh: function(cb) {
-      var that = this;
-      that.getToilets(function(err, data) {
-        // console.log(err);
-        // console.log(data);
-        that.count++;
-        that.list = data || [];
-        if (that.current) {
-          var item = that.list.find(function(p) {
-            return p.id == that.current.id;
-          });
-          if (item) {
-            that.current = item;
-          } else {
-            that.current = null;
-          }
-        }
-        cb && cb();
-      });
-    }
   }
 };
 </script>
 
 <style>
-.floatclear{
-  float: none;
-}
-
-#container {
-  width: 100%;
-  height: 100%;
-}
-.device {
-  float: left;
-  width: 200px;
-  height: 100%;
-  left: 0;
-  top: 0;
-  /* border-right: 2px solid gray; */
-  overflow-x: hidden;
-  overflow-y: auto;
-  background-color:red;
-}
-
-.device ul {
-  position: relative;
-  width: 100%;
-  height: auto;
-  padding: 0;
-  margin: 0;
-}
-
-.device ul li {
-  position: relative;
-  height: 50px;
-  border-bottom: 1px solid lightgray;
-  line-height: 50px;
-  text-indent: 15px;
-  cursor: pointer;
-}
-
-.device ul li.active {
-  background-color: #6693b2;
-  color: white;
-}
-.device ul li:hover {
-  background-color: #6693b2;
-  opacity: 0.5;
-  color: white;
-}
-
-.blogs {
-  /* float: right; */
-  left: 200px;
-  height: 100%;
-  widows: 100%;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  border-left: 2px solid gray;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.blogs table {
-  position: relative;
-  width: 100%;
-  height: auto;
-  border: none;
-}
-
-.blogs table thead tr th {
-  font-weight: normal;
-  background-color: #6693b2;
-  color: white;
-}
-
-.blogs table thead tr th,
-.blogs table tbody tr td {
-  width: 10%;
-  height: 50px;
-  text-align: center;
-  border: 1px solid lightgray;
-}
 </style>
